@@ -172,7 +172,7 @@ class BiasField3d(RandTransform):
         super().before_call(b, split_idx)
         bs = 1 if self.item else len(b[0])
         self.intensity = self.max_bias * torch.rand(bs, device=b[0].device)
-        self.k = torch.rand((bs, 3, *self.k_size), device=b[0].device)
+        self.k = torch.rand((*b[0].shape[:2], *self.k_size), device=b[0].device)
         if self.batch and bs > 1:
             self.intensity = self.intensity[:1].repeat(bs)
             self.k = self.k[:1].repeat(bs, 1, 1, 1, 1)
