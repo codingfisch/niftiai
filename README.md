@@ -1,8 +1,8 @@
 # niftiai
 
-`niftiai` aims to be the **easiest framework for training neural nets on 3D images** (often [NIfTIs](https://brainder.org/2012/09/23/the-nifti-file-format/)), using
+`niftiai` aims to be the **easiest framework to train neural nets on 3D images** (often [NIfTIs](https://brainder.org/2012/09/23/the-nifti-file-format/)), using
 
-- [`fastai`](https://docs.fast.ai/) *easy neural net training*
+- [`fastai`](https://github.com/fastai/fastai) *easy neural net training*
 - [`niftiview`](https://github.com/codingfisch/niftiview) *easy 3D image viewing*
 - [`mriaug`](https://github.com/codingfisch/mriaug) *easy 3D image (+MRI-specific) augmentation*
 
@@ -30,7 +30,7 @@ learner.fit(3)
 learner.show_results()  # add plt.show() if not in Jupyter notebook
 ```
 
-...and the [expert tutorial]() to see how **12 lines of code** train a UNet to do **MR image segmentation** 🤯
+...and the [intermediate tutorial]() to see how **12 lines of code** train a UNet to do **MR image segmentation** 🤯
 
 ```python
 import openneuro as on
