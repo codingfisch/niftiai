@@ -1,6 +1,6 @@
 # niftiai
 
-`niftiai` aims to be the **easiest framework for training neural nets on 3D images** (often [NIfTIs](https://brainder.org/2012/09/23/the-nifti-file-format/)), using
+`niftiai` aims to be the **easiest framework to train neural nets on 3D images** (often [NIfTIs](https://brainder.org/2012/09/23/the-nifti-file-format/)), using
 
 - [`fastai`](https://docs.fast.ai/) *easy neural net training*
 - [`niftiview`](https://github.com/codingfisch/niftiview) *easy 3D image viewing*
