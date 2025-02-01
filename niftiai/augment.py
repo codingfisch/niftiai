@@ -26,7 +26,7 @@ class Crop3d(RandTransform):
 
 class AffineWarp3d(RandTransform):
     order = 40
-    def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = (.1, .02, .02),
+    def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = .1,
                  max_translate: (float, tuple) = .1, max_shear: (float, tuple) = .02, p_affine: float = .5,
                  max_warp: float = .01, k_size: (int, tuple) = 2, p_warp: float = .5, upsample: float = 2,
                  size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
@@ -96,7 +96,7 @@ class Warp3d(RandTransform):
 
 class Affine3d(RandTransform):
     order = 40
-    def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = (.1, .02, .02),
+    def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = .1,
                  max_translate: (float, tuple) = .1, max_shear: (float, tuple) = .02, p: float = .5,
                  upsample: float = 2, size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros,
                  batch: bool = False, item: bool = False):
@@ -134,7 +134,7 @@ class Zoom3d(Affine3d):
 
 
 class Rotate3d(Affine3d):
-    def __init__(self, max_rotate: (float, tuple) = (.1, .02, .02), p: float = .5, upsample: float = 2,
+    def __init__(self, max_rotate: (float, tuple) = .1, p: float = .5, upsample: float = 2,
                  size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(max_zoom=0, max_rotate=max_rotate, max_translate=0, max_shear=0, p=p,
                          upsample=upsample, size=size, pad_mode=pad_mode, batch=batch, item=item)
@@ -329,7 +329,7 @@ def get_rand_affine_param(bs, max_param, device, batch):
 
 
 def aug_transforms3d(mult: float = 1., max_warp: float = .01, warp_k_size: int = 2, p_warp: float = .2,
-                     max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = (.1, .02, .02),
+                     max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = .1,
                      max_translate: (float, tuple) = .1, max_shear: float = .02, p_affine: float = .5,
                      max_noise: float = .1, max_dof_noise: int = 4, p_noise: float = .1, max_bias: float = .1,
                      bias_k_size: int = 2, p_bias: float = .1, max_contrast: float = .2, p_contrast: float = .1,
