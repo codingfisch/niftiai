@@ -7,7 +7,7 @@ from niftiai.core import TensorImage3d, TensorMask3d
 
 
 class Crop3d(RandTransform):
-    order = 10
+    order = 40
     def __init__(self, size: (int, tuple), max_translate: (float, tuple) = 1.,
                  p: float = .5, batch: bool = False, item: bool = False):
         super().__init__(p=p)
@@ -25,7 +25,7 @@ class Crop3d(RandTransform):
 
 
 class AffineWarp3d(RandTransform):
-    order = 10
+    order = 40
     def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = (.1, .02, .02),
                  max_translate: (float, tuple) = .1, max_shear: (float, tuple) = .02, p_affine: float = .5,
                  max_warp: float = .01, k_size: (int, tuple) = 2, p_warp: float = .5, upsample: float = 2,
@@ -67,7 +67,7 @@ class AffineWarp3d(RandTransform):
 
 
 class Warp3d(RandTransform):
-    order = 10
+    order = 40
     def __init__(self, max_magnitude: float = .01, k_size: (int, tuple) = 2, p: float = .5, upsample: float = 2,
                  size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(p=p)
@@ -95,7 +95,7 @@ class Warp3d(RandTransform):
 
 
 class Affine3d(RandTransform):
-    order = 10
+    order = 40
     def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = (.1, .02, .02),
                  max_translate: (float, tuple) = .1, max_shear: (float, tuple) = .02, p: float = .5,
                  upsample: float = 2, size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros,
@@ -155,7 +155,7 @@ class Shear3d(Affine3d):
 
 
 class ChiNoise3d(RandTransform):
-    order = 20
+    order = 50
     def __init__(self, max_intensity: float = .1, max_dof: int = 3, p: float = .5, batch: bool = False):
         super().__init__(p=p)
         store_attr()
@@ -165,7 +165,7 @@ class ChiNoise3d(RandTransform):
 
 
 class BiasField3d(RandTransform):
-    order = 30
+    order = 55
     def __init__(self, max_intensity: float = .1, k_size: (int, tuple) = 2, p: float = .5, batch: bool = False):
         super().__init__(p=p)
         k_size = tuple(3 * [k_size]) if isinstance(k_size, int) else k_size
@@ -185,7 +185,7 @@ class BiasField3d(RandTransform):
 
 
 class Contrast3d(RandTransform):
-    order = 40
+    order = 60
     def __init__(self, max_lighting: float = .2, p: float = .5, batch: bool = False):
         super().__init__(p=p)
         store_attr()
@@ -201,7 +201,7 @@ class Contrast3d(RandTransform):
 
 
 class Ringing3d(RandTransform):
-    order = 50
+    order = 65
     def __init__(self, max_intensity: float = .2, frequency: float = .7,
                  dims: (int, tuple) = 2, p: float = .5, batch: bool = False):
         super().__init__(p=p)
@@ -219,7 +219,7 @@ class Ringing3d(RandTransform):
 
 
 class Motion3d(RandTransform):
-    order = 60
+    order = 70
     def __init__(self, max_intensity: float = .2, max_move: float = .02,
                  p: float = .5, batch: bool = False, item: bool = False):
         super().__init__(p=p)
@@ -239,7 +239,7 @@ class Motion3d(RandTransform):
 
 
 class Ghosting3d(RandTransform):
-    order = 70
+    order = 75
     def __init__(self, max_intensity: float = .2, n_ghosts: int = 4,
                  dims: (int, tuple) = 2, p: float = .5, batch: bool = False):
         super().__init__(p=p)
@@ -257,7 +257,7 @@ class Ghosting3d(RandTransform):
 
 
 class Spike3d(RandTransform):
-    order = 75
+    order = 80
     def __init__(self, max_intensity: float = .5, max_frequency: float = 1., p: float = .5, batch: bool = False):
         super().__init__(p=p)
         store_attr()
@@ -275,7 +275,7 @@ class Spike3d(RandTransform):
 
 
 class Downsample3d(RandTransform):
-    order = 80
+    order = 85
     def __init__(self, max_downsample: float = 2., dims: (int, tuple) = 2,
                  p: float = .5, batch: bool = False, item: bool = False):
         super().__init__(p=p)
