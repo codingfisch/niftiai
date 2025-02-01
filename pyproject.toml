@@ -1,0 +1,25 @@
+[tool.poetry]
+name = 'niftiai'
+version = '0.1.0'
+description = 'Train neural nets on 3D images (e.g. MRIs) 🧠'
+authors = ['codingfisch <l_fisc17@wwu.de>']
+license = 'MIT'
+readme = 'README.md'
+repository = 'https://github.com/codingfisch/niftiai'
+classifiers = [
+    'Programming Language :: Python :: 3',
+    'Operating System :: OS Independent',
+    'Intended Audience :: Science/Research'
+]
+
+[tool.poetry.dependencies]
+python = '^3.9'
+fastai = '>=2.0.0'
+mriaug = '*'
+unet3d = '*'
+niftiview = '*'
+resize-right = '*'
+
+[build-system]
+requires = ['poetry-core']
+build-backend = 'poetry.core.masonry.api'
