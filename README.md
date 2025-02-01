@@ -10,7 +10,7 @@
 
 ## Quick Start 🚀
 
-Study the [beginner tutorial]() to **understand** how **15 lines of code** can train a neural net to **classify 🧠 MRIs**...
+Study the [beginner tutorial](https://colab.research.google.com/drive/1LSI49-n94uAML8h0uBe8hoz9YUEIQ59z?usp=sharing) to **understand** how **15 lines of code** can train a neural net to **classify 🧠 MRIs**...
 
 ```python
 import openneuro as on
@@ -30,7 +30,7 @@ learner.fit(3)
 learner.show_results()  # add plt.show() if not in Jupyter notebook
 ```
 
-...and the [intermediate tutorial]() to see how **12 lines of code** train a UNet to do **MR image segmentation** 🤯
+...and the [intermediate tutorial](https://colab.research.google.com/drive/1L1RX8OTzt5GCSatTNTH5aoHSd5hGHMOQ?usp=sharing) to see how **12 lines of code** train a UNet to do **MR image segmentation** 🤯
 
 ```python
 import openneuro as on
