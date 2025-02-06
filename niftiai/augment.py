@@ -343,10 +343,10 @@ def aug_transforms3d(mult: float = 1., max_warp: float = .01, warp_k_size: int =
     do_rotate = all(p != 0 for p in max_rotate) if isinstance(max_rotate, Iterable) else max_rotate != 0
     do_translate = all(p != 0 for p in max_translate) if isinstance(max_translate, Iterable) else max_translate != 0
     do_shear = all(p != 0 for p in max_shear) if isinstance(max_shear, Iterable) else max_shear != 0
-    mult_max_zoom = (mult * p for p in max_zoom) if isinstance(max_zoom, Iterable) else mult * max_zoom
-    mult_max_rotate = (mult * p for p in max_rotate) if isinstance(max_rotate, Iterable) else mult * max_rotate
-    mult_max_translate = (mult * p for p in max_translate) if isinstance(max_translate, Iterable) else mult * max_translate
-    mult_max_shear = (mult * p for p in max_shear) if isinstance(max_shear, Iterable) else mult * max_shear
+    mult_max_zoom = tuple(mult * p for p in max_zoom) if isinstance(max_zoom, Iterable) else mult * max_zoom
+    mult_max_rotate = tuple(mult * p for p in max_rotate) if isinstance(max_rotate, Iterable) else mult * max_rotate
+    mult_max_translate = tuple(mult * p for p in max_translate) if isinstance(max_translate, Iterable) else mult * max_translate
+    mult_max_shear = tuple(mult * p for p in max_shear) if isinstance(max_shear, Iterable) else mult * max_shear
     res = []
     if max_warp:
         if do_zoom or do_rotate or do_translate or do_shear:
