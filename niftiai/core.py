@@ -22,16 +22,17 @@ class TensorImageBase3d(TensorImageBW):
         affines = len(self) * [self.affine if hasattr(self, 'affine') and use_affine else None]
         return NiftiImageGrid(arrays=arrays, affines=affines).get_image(**kwargs)
 
-    def save(self, fn: (str, Path), squeeze=True, no_warning=False, cls=nib.Nifti1Image, **kwargs):
+    def save(self, fn: (str, Path), keep_shape=False, squeeze=True, no_warning=False, cls=nib.Nifti1Image, **kwargs):
         array = self.detach().cpu().numpy()
         if str(fn).endswith('.npy'):
             np.save(fn, array, **kwargs)
         else:
-            array = channels_last(array)
-            if squeeze and array.ndim > 3:
-                array = array.squeeze()
-            if array.ndim > 4 and not no_warning:
-                warnings.warn(f'Could not squeeze array into 4D. Saved {array.ndim}D array', UserWarning)
+            if not keep_shape:
+                array = channels_last(array)
+                if squeeze and array.ndim > 3:
+                    array = array.squeeze()
+                if array.ndim > 4 and not no_warning:
+                    warnings.warn(f'Could not squeeze array into 4D. Saved {array.ndim}D array', UserWarning)
             array = orient_array(array, self.affine)
             cls(array, affine=self.affine, header=self.header).to_filename(fn, **kwargs)
 
