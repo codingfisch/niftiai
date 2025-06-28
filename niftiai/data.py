@@ -97,29 +97,3 @@ def get_results_image(x, y, samples, outs, max_n, nrows, targ_title, pred_title,
     im0 = get_blended_image([x[:max_n, 0], y[:max_n]], nrows=nrows, title=targ_title, **kwargs)
     im1 = get_blended_image([x[:max_n, 0], torch.stack([*outs.itemgot(0)[:max_n]])], nrows=nrows, title=pred_title, **kwargs)
     return Image.fromarray(np.hstack([np.array(im0), np.array(im1)]))
-
-
-if __name__ == '__main__':
-    import glob
-    import matplotlib.pyplot as plt
-    from niftiai.transforms import Resize
-
-    #fps = sorted(glob.glob('/home/lfisch/Data/mri/test_files_2/raw_nii/*.nii'))[:32]
-    #fps_mask = sorted(glob.glob('/home/lfisch/Data/mri/test_files_2/brain_mask_nii/*.nii'))[:32]
-    # fps = sorted(glob.glob('/mnt/data-ssd/neuro/T1w_images/test_files_gz/*.nii.gz'))[:32]
-    # fps_mask = sorted(glob.glob('/mnt/data-ssd/neuro/T1w_images/masks_nii/*.nii'))[:32]
-    fps = sorted(glob.glob('/home/lfisch/Projects/niftiai_beta/data/ds000001/*/anat/*.nii.gz'))
-    fps_mask = sorted(glob.glob('/home/lfisch/Projects/niftiai_beta/data/ds000001/derivatives/deepmriprep/*/anat/mri/mask*.nii.gz'))
-    df = pd.DataFrame({'filepath': fps, 'age': sum([], (len(fps) // 2) * ['a', 'b'])})
-
-    # dls = ImageDataLoaders3d.from_df(df, path='/', fn_col='filepath', label_col='age', y_block=CategoryBlock(),
-    #                                  item_tfms=[Resize(size=(128, 128, 128)),], bs=4)
-    # dls.show_batch()
-
-    #plt.show()
-
-    df_ = pd.DataFrame({'filepath': fps, 'filepath_mask': fps_mask})
-    dls = SegmentationDataLoaders3d.from_df(df_, path='/', fn_col='filepath', label_col='filepath_mask',
-                                            item_tfms=[Resize(size=(128, 128, 128)),])
-    dls.show_batch(cbar=True)#, use_affine=True)
-    plt.show()
