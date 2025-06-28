@@ -1,7 +1,6 @@
 import nibabel as nib
 from niftiview import NiftiImageGrid
 from niftiview.image import CMAP, QRANGE
-from niftiview.core import load_np, load_nib
 from fastai.basics import np, plt, torch, ndarray, warnings, Path, Tensor, TensorImageBW
 
 
@@ -37,14 +36,17 @@ class TensorImageBase3d(TensorImageBW):
             cls(array, affine=self.affine, header=self.header).to_filename(fn, **kwargs)
 
     @classmethod
-    def create(cls, fn: (str, Path, ndarray, Tensor), affine=None, header=None, filepath=None, **kwargs):
+    def create(cls, fn: (str, Path, ndarray, Tensor), affine=None, header=None, filepath=None, slices=None, **kwargs):
         if isinstance(fn, (str, Path)):
             filepath = str(fn)
-            fn, affine, header = load_np(filepath) if filepath.endswith('.npy') else load_nib(filepath)
+            if '[' in filepath and ':' in filepath and filepath.endswith(']'):
+                filepath, slices = extract_slices(filepath)
+            fn, affine, header = load_np(filepath, slices) if filepath.endswith('.npy') else load_nib(filepath, slices)
             fn = tensor_reshape(fn, is_mask='TensorMask3d' in str(cls))
         if isinstance(fn, ndarray):
-            fn = torch.from_numpy(fn)
-        return cls.__new__(cls=cls, x=fn, affine=affine, header=header, filepath=filepath, org_shape=fn.shape, **kwargs)
+            fn = torch.from_numpy(fn.copy())
+        return cls.__new__(cls=cls, x=fn, affine=affine, header=header,
+                           filepath=filepath, org_shape=fn.shape, slices=slices, **kwargs)
 
 
 class TensorImage3d(TensorImageBase3d):
@@ -61,7 +63,41 @@ class TensorMask3d(TensorImageBase3d):
             kwargs['vrange'] = (0, vmax)
             kwargs['cmap'] = 'colorbrewer:' + ('reds' if vmax < 3 else f'set1_{vmax}_r' if vmax < 10 else 'set1_r')
         return super().show(**kwargs)
-        # return TensorImage3D(self).show(**kwargs)
+
+
+def load_np(filepath, slices=None, header=None):
+    array = np.load(filepath)
+    array = array if slices is None else array[*slices]
+    affine = get_dummy_affine(array.shape)
+    return array, affine, header
+
+
+def get_dummy_affine(shape):
+    affine = np.eye(4)
+    affine[:3, 3] -= np.array(shape) / 2
+    return affine
+
+
+def load_nib(filepath, slices=None):
+    im = nib.load(filepath)
+    array = nib.as_closest_canonical(im).get_fdata() if slices is None else im.dataobj[*slices]
+    return array, im.affine, im.header
+
+
+def extract_slices(filepath):
+    filepath, bounds = str(filepath).split('[')
+    slices = []
+    for b in bounds[:-1].replace(' ', '').split(','):
+        if b == ':':
+            slices.append(slice(None))
+        elif b.startswith(':'):
+            slices.append(slice(int(float(b[1:]))))
+        elif b.endswith(':'):
+            slices.append(slice(int(float(b[:-1])), None))
+        else:
+            start, stop = b.split(':')
+            slices.append(slice(int(float(start)), int(float(stop))))
+    return filepath, slices
 
 
 def plot(im, ax=None, figsize=None, ctx=None):
