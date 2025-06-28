@@ -1,4 +1,4 @@
-from fastai.basics import os, np, pd, csv, torch, is_listy, delegates, typedispatch, Path, Tensor, TitledFloat, ColSplitter
+from fastai.basics import os, np, pd, csv, torch, is_listy, delegates, dispatch, Path, Tensor, TitledFloat, ColSplitter
 from fastai.data.all import DataBlock, CategoryBlock, MultiCategoryBlock, DataLoaders, TransformBlock, ColReader, RandomSplitter
 from fastai.vision.all import Image, TensorCategory, AddMaskCodes
 
@@ -37,13 +37,13 @@ class ImageDataLoaders3d(DataLoaders):
         return cls.from_df(df, path=path, **kwargs)
 
 
-@typedispatch
+@dispatch
 def show_batch(x: TensorImage3d, y: Tensor, samples, max_n=10, ctxs=None, **kwargs):
     title = [str(item) for item in samples.itemgot(1)]
     return x[:max_n].show(title=title, **kwargs)
 
 
-@typedispatch
+@dispatch
 def show_results(x: TensorImage3d, y: Tensor, samples, outs, max_n=10, ctxs=None, **kwargs):
     title = []
     for item, pred, _ in zip(samples.itemgot(1), outs.itemgot(0), range(max_n)):
@@ -53,7 +53,7 @@ def show_results(x: TensorImage3d, y: Tensor, samples, outs, max_n=10, ctxs=None
     return x[:max_n].show(title=title, **kwargs)
 
 
-@typedispatch
+@dispatch
 def plot_top_losses(x: TensorImage3d, y: TensorCategory, samples, outs, raws, losses, **kwargs):
     title = []
     for item, pred, r, loss in zip(samples.itemgot(1), outs.itemgot(0), raws, losses):
@@ -69,12 +69,12 @@ class SegmentationDataLoaders3d(ImageDataLoaders3d):
         return ImageDataLoaders3d.from_df(df, y_block=y_block, **kwargs)
 
 
-@typedispatch
+@dispatch
 def show_batch(x: TensorImage3d, y: TensorMask3d, samples, ctxs=None, figsize=None, ctx=None, max_n=16, **kwargs):
     return plot(get_blended_image([x[:max_n, 0], y[:max_n]], **kwargs), figsize=figsize, ctx=ctx)
 
 
-@typedispatch
+@dispatch
 def show_results(x: TensorImage3d, y: TensorMask3d, samples, outs, ctxs=None, max_n=16, figsize=None, ctx=None, nrows=None, **kwargs):
     nrows = len(x) if nrows is None else nrows
     targ_title, pred_title = (['Target'] + [None] * (nrows - 1), ['Prediction'] + [None] * (nrows - 1))
@@ -82,7 +82,7 @@ def show_results(x: TensorImage3d, y: TensorMask3d, samples, outs, ctxs=None, ma
     return plot(im, figsize=figsize, ctx=ctx)
 
 
-@typedispatch
+@dispatch
 def plot_top_losses(x: TensorImage3d, y: TensorMask3d, samples, outs, raws, losses, max_n=16, figsize=None, ctx=None, nrows=None, **kwargs):
     targ_title, pred_title = [], []
     for loss in losses:
