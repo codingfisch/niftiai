@@ -29,7 +29,8 @@ class AffineWarp3d(RandTransform):
     def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = .1,
                  max_translate: (float, tuple) = .1, max_shear: (float, tuple) = .02, p_affine: float = .5,
                  max_warp: float = .01, k_size: (int, tuple) = 2, p_warp: float = .5, upsample: float = 2,
-                 size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
+                 size: (int, tuple) = None, image_mode: str = 'bilinear', mask_mode: str = 'nearest',
+                 pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__()
         max_zoom = max_zoom if isinstance(max_zoom, Iterable) else tuple(3 * [max_zoom])
         max_rotate = max_rotate if isinstance(max_rotate, Iterable) else tuple(3 * [max_rotate])
@@ -57,7 +58,8 @@ class AffineWarp3d(RandTransform):
         self.kws = {'do_affine': self.do_affine, 'do_warp': self.do_warp, 'zoom': self.zoom,
                     'rotate': self.rotate, 'translate': self.translate, 'shear': self.shear,
                     'warp': self.warp, 'k': self.k, 'upsample': self.upsample, 'size': self.size,
-                    'mode': 'nearest' if isinstance(b[0], TensorMask3d) else 'bilinear', 'pad_mode': self.pad_mode}
+                    'mode': self.mask_mode if isinstance(b[0], TensorMask3d) else self.image_mode,
+                    'pad_mode': self.pad_mode}
 
     def encodes(self, x: TensorImage3d):
         return apply_affinewarp3d(x[None], **self.kws)[0] if self.item else apply_affinewarp3d(x, **self.kws)
@@ -69,7 +71,8 @@ class AffineWarp3d(RandTransform):
 class Warp3d(RandTransform):
     order = 40
     def __init__(self, max_magnitude: float = .01, k_size: (int, tuple) = 2, p: float = .5, upsample: float = 2,
-                 size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
+                 size: (int, tuple) = None, image_mode: str = 'bilinear', mask_mode: str = 'nearest',
+                 pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(p=p)
         k_size = tuple(3 * [k_size]) if isinstance(k_size, int) else k_size
         size = None if size is None else (size, size, size) if isinstance(size, int) else tuple(size)
@@ -85,7 +88,8 @@ class Warp3d(RandTransform):
             self.magnitude = self.magnitude[:1]
             self.k = self.k[:1]
         self.kws = {'magnitude': self.magnitude, 'k': self.k, 'upsample': self.upsample, 'size': self.size,
-                    'mode': 'bilinear' if isinstance(b[0], TensorMask3d) else 'bilinear', 'pad_mode': self.pad_mode}
+                    'mode': self.mask_mode if isinstance(b[0], TensorMask3d) else self.image_mode,
+                    'pad_mode': self.pad_mode}
 
     def encodes(self, x: TensorImage3d):
         return warp3d(x[None], **self.kws)[0] if self.item else warp3d(x, **self.kws)
@@ -98,8 +102,9 @@ class Affine3d(RandTransform):
     order = 40
     def __init__(self, max_zoom: (float, tuple) = .1, max_rotate: (float, tuple) = .1,
                  max_translate: (float, tuple) = .1, max_shear: (float, tuple) = .02, p: float = .5,
-                 upsample: float = 2, size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros,
-                 batch: bool = False, item: bool = False):
+                 upsample: float = 2, size: (int, tuple) = None, image_mode: str = 'bilinear',
+                 mask_mode: str = 'nearest', pad_mode: PadMode = PadMode.Zeros, batch: bool = False,
+                 item: bool = False):
         super().__init__(p=p)
         max_zoom = max_zoom if isinstance(max_zoom, Iterable) else tuple(3 * [max_zoom])
         max_rotate = max_rotate if isinstance(max_rotate, Iterable) else tuple(3 * [max_rotate])
@@ -117,7 +122,7 @@ class Affine3d(RandTransform):
         self.shear = get_rand_affine_param(bs, self.max_shear, device=b[0].device, batch=self.batch)
         self.kws = {'zoom': self.zoom, 'rotate': self.rotate, 'translate': self.translate, 'shear': self.shear,
                     'upsample': self.upsample, 'size': self.size, 'pad_mode': self.pad_mode,
-                    'mode': 'nearest' if isinstance(b[0], TensorMask3d) else 'bilinear'}
+                    'mode': self.mask_mode if isinstance(b[0], TensorMask3d) else self.image_mode}
 
     def encodes(self, x: TensorImage3d):
         return affine3d(x[None], **self.kws)[0] if self.item else affine3d(x, **self.kws)
@@ -128,30 +133,38 @@ class Affine3d(RandTransform):
 
 class Zoom3d(Affine3d):
     def __init__(self, max_zoom: (float, tuple) = .1, p: float = .5, upsample: float = 2,
-                 size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
+                 size: (int, tuple) = None, image_mode: str = 'bilinear', mask_mode: str = 'nearest',
+                 pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(max_zoom=max_zoom, max_rotate=0, max_translate=0, max_shear=0, p=p,
-                         upsample=upsample, size=size, pad_mode=pad_mode, batch=batch, item=item)
+                         upsample=upsample, size=size, image_mode=image_mode, mask_mode=mask_mode,
+                         pad_mode=pad_mode, batch=batch, item=item)
 
 
 class Rotate3d(Affine3d):
     def __init__(self, max_rotate: (float, tuple) = .1, p: float = .5, upsample: float = 2,
-                 size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
+                 size: (int, tuple) = None, image_mode: str = 'bilinear', mask_mode: str = 'nearest',
+                 pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(max_zoom=0, max_rotate=max_rotate, max_translate=0, max_shear=0, p=p,
-                         upsample=upsample, size=size, pad_mode=pad_mode, batch=batch, item=item)
+                         upsample=upsample, size=size, image_mode=image_mode, mask_mode=mask_mode,
+                         pad_mode=pad_mode, batch=batch, item=item)
 
 
 class Translate3d(Affine3d):
     def __init__(self, max_translate: (float, tuple) = .1, p: float = .5, upsample: float = 2.,
-                 size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
+                 size: (int, tuple) = None, image_mode: str = 'bilinear', mask_mode: str = 'nearest',
+                 pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(max_zoom=0, max_rotate=0, max_translate=max_translate, max_shear=0, p=p,
-                         upsample=upsample, size=size, pad_mode=pad_mode, batch=batch, item=item)
+                         upsample=upsample, size=size, image_mode=image_mode, mask_mode=mask_mode,
+                         pad_mode=pad_mode, batch=batch, item=item)
 
 
 class Shear3d(Affine3d):
     def __init__(self, max_shear: (float, tuple) = .02, p: float = .5, upsample: float = 2,
-                 size: (int, tuple) = None, pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
+                 size: (int, tuple) = None, image_mode: str = 'bilinear', mask_mode: str = 'nearest',
+                 pad_mode: PadMode = PadMode.Zeros, batch: bool = False, item: bool = False):
         super().__init__(max_zoom=0, max_rotate=0, max_translate=0, max_shear=max_shear, p=p,
-                         upsample=upsample, size=size, pad_mode=pad_mode, batch=batch, item=item)
+                         upsample=upsample, size=size, image_mode=image_mode, mask_mode=mask_mode,
+                         pad_mode=pad_mode, batch=batch, item=item)
 
 
 class ChiNoise3d(RandTransform):
