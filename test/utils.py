@@ -16,7 +16,7 @@ def get_plt_figure_array(fig=None):
 
 
 def setup_dataset(path):
-    path.mkdir(exist_ok=True)
+    path.mkdir(exist_ok=True, parents=True)
     img_fns, mask_fns = [], []
     for template, atlas in zip(TEMPLATES, ATLASES):
         img_fn = path / f'{template}.nii'

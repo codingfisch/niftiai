@@ -26,7 +26,7 @@ class TestLearner(unittest.TestCase):
         learner.show_results()
         im_arr = get_plt_figure_array()
         plt.close('all')
-        ref_im = Image.open(ref_dir / 'plt_results.png')
+        #ref_im = Image.open(ref_dir / 'plt_results.png')
         #self.assertTrue(np.array_equal(im_arr, np.array(ref_im)))  # does sometimes fail (despite being ok) due to random seed
         #Image.fromarray(im_arr).save(ref_dir/'plt_results.png')
 
