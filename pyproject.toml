@@ -1,6 +1,6 @@
 [tool.poetry]
 name = 'niftiai'
-version = '0.2.0'
+version = '0.3.0'
 description = 'Train neural nets on 3D images (e.g. MRIs) 🧠'
 authors = ['codingfisch <l_fisc17@wwu.de>']
 license = 'MIT'
